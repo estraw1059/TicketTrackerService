@@ -2,9 +2,11 @@ package com.ticketTracker.ticketTracker.model;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.UUID;
 
-@Entity
+@Entity(name = "time_log")
+@Table (name = "time_log")
 public class TimeLog {
     @Id
     private UUID logId;
