@@ -23,6 +23,11 @@ public class RepoController {
         return repoService.getAllRepos();
     }
 
+    @GetMapping(path = "{repoId}")
+    public Repo getRepoById(@PathVariable("repoId") UUID repoId) {
+        return repoService.getRepoById(repoId);
+    }
+
     @PostMapping
     public Repo createNewRepo(@RequestBody Repo repo) {
         return repoService.createNewRepo(repo);

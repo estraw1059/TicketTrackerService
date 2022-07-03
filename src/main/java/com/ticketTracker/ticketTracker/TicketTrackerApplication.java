@@ -23,14 +23,17 @@ public class TicketTrackerApplication {
 	@Bean
 	CommandLineRunner commandLineRunner(RepoRepository repoRepository, TimeLogRepository timeLogRepository, TicketTrackerRepository ticketTrackerRepository) {
 		return args -> {
-			repoRepository.save(new Repo(UUID.randomUUID(), "Example Service"));
-			timeLogRepository.save(new TimeLog(UUID.randomUUID(), UUID.randomUUID(), 22));
+			UUID repoId = UUID.randomUUID();
+			UUID ticketId = UUID.fromString("d833eec8-58ae-4c62-90c7-bce81e96b86e");
+			UUID hourLogId = UUID.randomUUID();
+			repoRepository.save(new Repo(repoId, "Example Service"));
+			timeLogRepository.save(new TimeLog(hourLogId, ticketId, 22));
 			ticketTrackerRepository.save(new TicketTracker(
-					UUID.randomUUID(),
+					ticketId,
 					"Test Ticket",
 					"Some Description",
 					new Date(),
-					UUID.randomUUID(),
+					repoId,
 					false,
 					false,
 					false,
