@@ -1,9 +1,11 @@
 package com.ticketTracker.ticketTracker.service;
 
+import com.ticketTracker.ticketTracker.errorHandling.TicketTrackerException;
 import com.ticketTracker.ticketTracker.model.TimeLog;
 import com.ticketTracker.ticketTracker.repository.TimeLogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -39,7 +41,7 @@ public class TimeLogService {
         return totalTime;
     }
 
-    public TimeLog createTimeLog(TimeLog timeLog) {
+    public TimeLog createTimeLog(TimeLog timeLog) throws TicketTrackerException {
         confirmTicketExist(timeLog.getTicketId());
         timeLog.setLogId(UUID.randomUUID());
         timeLogRepository.save(timeLog);
@@ -47,25 +49,27 @@ public class TimeLogService {
     }
 
     @Transactional
-    public TimeLog updateTimeLog(TimeLog newTimeLog) {
+    public TimeLog updateTimeLog(TimeLog newTimeLog) throws TicketTrackerException {
         confirmTicketExist(newTimeLog.getTicketId());
-        TimeLog oldTimeLog = timeLogRepository.findById(newTimeLog.getLogId()).orElseThrow(() -> new IllegalStateException("Time Log not found"));
+        TimeLog oldTimeLog = timeLogRepository.findById(newTimeLog.getLogId())
+                .orElseThrow(() ->  new TicketTrackerException("Time Log Not Found", HttpStatus.NOT_FOUND));
         oldTimeLog.setMinutes(newTimeLog.getMinutes());
         oldTimeLog.setTicketId(newTimeLog.getTicketId());
         return oldTimeLog;
     }
 
-    private void confirmTicketExist(UUID ticketId) {
+    private void confirmTicketExist(UUID ticketId) throws TicketTrackerException {
         ticketTrackerService.getTicketById(ticketId);
     }
 
-    public void deleteTimeLog(UUID timeLogId) {
-        TimeLog toDelete = timeLogRepository.findById(timeLogId).orElseThrow(() -> new IllegalStateException("Time Log not found"));
+    public void deleteTimeLog(UUID timeLogId) throws TicketTrackerException {
+        TimeLog toDelete = timeLogRepository.findById(timeLogId)
+                .orElseThrow(() -> new TicketTrackerException("Time Log Not Found", HttpStatus.NOT_FOUND));
         timeLogRepository.delete(toDelete);
     }
 
     @Transactional
-    public void deleteTimeLogByTicketId(UUID ticketId) {
+    public void deleteTimeLogByTicketId(UUID ticketId) throws TicketTrackerException {
         //Ensure that Ticket is there
         ticketTrackerService.getTicketById(ticketId);
         timeLogRepository.deleteByTicketId(ticketId);

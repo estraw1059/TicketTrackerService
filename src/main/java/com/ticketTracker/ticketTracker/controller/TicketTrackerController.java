@@ -1,5 +1,6 @@
 package com.ticketTracker.ticketTracker.controller;
 
+import com.ticketTracker.ticketTracker.errorHandling.TicketTrackerException;
 import com.ticketTracker.ticketTracker.model.TicketTracker;
 import com.ticketTracker.ticketTracker.service.TicketTrackerService;
 import com.ticketTracker.ticketTracker.service.TimeLogService;
@@ -27,23 +28,23 @@ public class TicketTrackerController {
     }
 
     @GetMapping(path="{ticketId}")
-    public TicketTracker getTicketById(@PathVariable("ticketId") UUID ticketId) {
+    public TicketTracker getTicketById(@PathVariable("ticketId") UUID ticketId) throws TicketTrackerException {
         return ticketTrackerService.getTicketById(ticketId);
     }
 
     @PostMapping
-    public TicketTracker createTicket(@RequestBody TicketTracker ticket) {
+    public TicketTracker createTicket(@RequestBody TicketTracker ticket) throws TicketTrackerException {
         return ticketTrackerService.createTicket(ticket);
     }
 
     @PutMapping
-    public TicketTracker updateTicket(@RequestBody TicketTracker ticket) {
+    public TicketTracker updateTicket(@RequestBody TicketTracker ticket) throws TicketTrackerException {
         return ticketTrackerService.updateTicket(ticket);
     }
 
 
     @DeleteMapping(path="{ticketId}")
-    public void deleteTicketById(@PathVariable("ticketId") UUID ticketId) {
+    public void deleteTicketById(@PathVariable("ticketId") UUID ticketId) throws TicketTrackerException {
         ticketTrackerService.deleteTicketById(ticketId);
     }
 }

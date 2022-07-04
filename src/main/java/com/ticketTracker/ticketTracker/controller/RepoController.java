@@ -1,5 +1,6 @@
 package com.ticketTracker.ticketTracker.controller;
 
+import com.ticketTracker.ticketTracker.errorHandling.TicketTrackerException;
 import com.ticketTracker.ticketTracker.model.Repo;
 import com.ticketTracker.ticketTracker.service.RepoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ public class RepoController {
     }
 
     @GetMapping(path = "{repoId}")
-    public Repo getRepoById(@PathVariable("repoId") UUID repoId) {
+    public Repo getRepoById(@PathVariable("repoId") UUID repoId) throws TicketTrackerException {
         return repoService.getRepoById(repoId);
     }
 
@@ -34,12 +35,12 @@ public class RepoController {
     }
 
     @PutMapping
-    public Repo updateRepo(@RequestBody Repo repo) {
+    public Repo updateRepo(@RequestBody Repo repo) throws TicketTrackerException {
         return repoService.updateRepo(repo);
     }
 
     @DeleteMapping(path = "{repoId}")
-    public void deleteRepo(@PathVariable("repoId") UUID repoId) {
+    public void deleteRepo(@PathVariable("repoId") UUID repoId) throws TicketTrackerException {
         repoService.deleteRepo(repoId);
     }
 }

@@ -1,5 +1,6 @@
 package com.ticketTracker.ticketTracker.controller;
 
+import com.ticketTracker.ticketTracker.errorHandling.TicketTrackerException;
 import com.ticketTracker.ticketTracker.model.TimeLog;
 import com.ticketTracker.ticketTracker.service.TimeLogService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,17 +30,17 @@ public class TimeLogController {
     }
 
     @PostMapping
-    public TimeLog createNewTimeLog(@RequestBody TimeLog timeLog) {
+    public TimeLog createNewTimeLog(@RequestBody TimeLog timeLog) throws TicketTrackerException {
         return timeLogService.createTimeLog(timeLog);
     }
 
     @PutMapping
-    public TimeLog updateTimeLog(@RequestBody TimeLog timeLog) {
+    public TimeLog updateTimeLog(@RequestBody TimeLog timeLog) throws TicketTrackerException {
         return timeLogService.updateTimeLog(timeLog);
     }
 
     @DeleteMapping(path="{timeLogId}")
-    public void deleteTimeLog(@PathVariable("timeLogId") UUID timeLogId) {
+    public void deleteTimeLog(@PathVariable("timeLogId") UUID timeLogId) throws TicketTrackerException {
         timeLogService.deleteTimeLog(timeLogId);
     }
 }

@@ -1,9 +1,11 @@
 package com.ticketTracker.ticketTracker.service;
 
+import com.ticketTracker.ticketTracker.errorHandling.TicketTrackerException;
 import com.ticketTracker.ticketTracker.model.Repo;
 import com.ticketTracker.ticketTracker.model.TicketTracker;
 import com.ticketTracker.ticketTracker.repository.RepoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -34,24 +36,32 @@ public class RepoService {
     }
 
     @Transactional
-    public Repo updateRepo(Repo repo) {
+    public Repo updateRepo(Repo repo) throws TicketTrackerException {
         //Check that repo exist
-        Repo currentRepo = repoRepository.findById(repo.getRepoId()).orElseThrow(() -> new IllegalStateException("Repo Doesn't Exist"));
+        Repo currentRepo = repoRepository.findById(
+                repo.getRepoId()).orElseThrow(() ->
+                new TicketTrackerException("Repo Not Found", HttpStatus.NOT_FOUND));
         currentRepo.setRepoName(repo.getRepoName());
         return currentRepo;
     }
 
-    public void deleteRepo(UUID repoId) {
-        Repo toDelete = repoRepository.findById(repoId).orElseThrow(() -> new IllegalStateException("Repo Doesn't Exist"));
+    public void deleteRepo(UUID repoId) throws TicketTrackerException {
+        Repo toDelete = repoRepository.findById(repoId)
+                .orElseThrow(() -> new TicketTrackerException("Repo Not Found", HttpStatus.NOT_FOUND));
         //Get all tickets for repo
         List<TicketTracker> ticketsToDelete = ticketTrackerService.getAllByServiceId(toDelete.getRepoId());
         ticketsToDelete.forEach(ticketToDelete -> {
-            ticketTrackerService.deleteTicketById(ticketToDelete.getTicketId());
+            try {
+                ticketTrackerService.deleteTicketById(ticketToDelete.getTicketId());
+            } catch (TicketTrackerException e) {
+                return;
+            }
         });
         repoRepository.delete(toDelete);
     }
 
-    public Repo getRepoById(UUID repoId) {
-        return repoRepository.findById(repoId).orElseThrow(() -> new IllegalStateException(("Repo Not Found")));
+    public Repo getRepoById(UUID repoId) throws TicketTrackerException {
+        return repoRepository.findById(repoId)
+                .orElseThrow(() -> new TicketTrackerException("Repo Not Found", HttpStatus.NOT_FOUND));
     }
 }
